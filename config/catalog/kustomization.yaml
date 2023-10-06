@@ -1,0 +1,8 @@
+# Adds namespace to all resources.
+namespace: woke-catalog
+
+## Append samples of your project ##
+resources:
+- components/woke/woke-scan-1.0.0.yaml
+- components/woke/woke-scan-pipeline.yaml
+#+kubetester:scaffold:manifestskustomizesamples

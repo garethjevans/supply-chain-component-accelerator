@@ -24,7 +24,7 @@ spec:
                   - kbld-config.yaml
       export:
         - imgpkgBundle:
-            image: #@ data.values.build.registry_host + "/" + data.values.build.registry_project + "/catalog-bundle"
+            image: #@ data.values.build.registry_host + "/" + data.values.build.registry_project + "/woke-bundle"
             useKbldImagesLock: true
           includePaths:
             - carvel/config.yaml

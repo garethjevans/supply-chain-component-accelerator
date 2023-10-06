@@ -44,6 +44,9 @@ build-all-options:
 clean:
 	rm -fr generated
 
+ifndef ignore-not-found
+  ignore-not-found = true
+endif
 
 ##@ Catalog Targets
 
@@ -56,7 +59,13 @@ $(LOCALBIN):
 KUSTOMIZE_VERSION ?= v4.5.7
 YTT_VERSION ?= v0.45.4
 
+## Tool Locations
+KUSTOMIZE ?= $(LOCALBIN)/kustomize
+YTT ?= $(LOCALBIN)/ytt
+
+## Tool Installation
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
+
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
 
@@ -76,6 +85,7 @@ $(YTT): $(LOCALBIN)
 .PHONY: carvel
 carvel: kustomize
 	mkdir -p carvel
+	echo $(KUSTOMIZE)
 	$(KUSTOMIZE) build config/catalog > carvel/config.yaml
 
 .PHONY: package
