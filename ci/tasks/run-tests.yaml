@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/library/golang
+    tag: '1.20'
+
+inputs:
+  - name: repo
+
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      cd repo

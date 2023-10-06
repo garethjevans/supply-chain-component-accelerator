@@ -1,0 +1,31 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: kctrl.carvel.dev/v1alpha1
+kind: PackageBuild
+metadata:
+  name: catalog.cartographer.tanzu.vmware.com
+spec:
+  release:
+    - resource: {}
+  template:
+    spec:
+      app:
+        spec:
+          deploy:
+            - kapp: {}
+          template:
+            - ytt:
+                paths:
+                  - carvel/config.yaml
+                  - kbld-config.yaml
+            - kbld:
+                paths:
+                  - carvel/config.yaml
+                  - kbld-config.yaml
+      export:
+        - imgpkgBundle:
+            image: #@ data.values.build.registry_host + "/" + data.values.build.registry_project + "/catalog-bundle"
+            useKbldImagesLock: true
+          includePaths:
+            - carvel/config.yaml
+            - kbld-config.yaml

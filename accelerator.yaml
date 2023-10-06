@@ -1,0 +1,69 @@
+accelerator:
+  displayName: TAP Supply Chain
+  description: Boilerplate for generating a Tanzu Application Platform Supply Chain that takes a workload from
+    source, builds and prepares it for deployment.
+  iconUrl: https://avatars.githubusercontent.com/u/54452117?s=200&v=4
+  tags:
+  - tanzu
+  - supply-chain
+
+  options:
+
+  - label: Component Name
+    description: The name of the component
+    defaultValue: woke-scan
+    name: componentName
+    inputType: text
+    dataType: string
+    required: true
+
+  - label: Registry Server
+    description: The registry to push the package & images to
+    defaultValue: dev.registry.tanzu.vmware.com
+    name: registryServer
+    inputType: text
+    dataType: string
+    required: true
+
+  - label: Repository
+    description: The name of the repository to store the bundle/image in
+    defaultValue: supply-chain-choreographer/cartographer-v2
+    name: repository
+    inputType: text
+    dataType: string
+    required: true
+
+  - label: Package Name
+    defaultValue: "woke.tanzu.vmware.com"
+    name: packageName
+    inputType: text
+    dataType: string
+    required: true
+
+  imports:
+  - name: tap-workload
+     
+engine:
+  merge:
+  - include: [ "**" ]
+    exclude: [ ".git", ".idea", "generated", "build-local.sh", "generated/**", "tests/**" ]
+
+  - include: [ "README.md", "config/*.yaml", "ci/**", "build-templates/**" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: "source-test-scan-to-url"
+        with: "#artifactId.toLowerCase()"
+      - text: "woke-scan"
+        with: "#componentName"
+      - text: "dev.registry.tanzu.vmware.com"
+        with: "#registryServer"
+      - text: "supply-chain-choreographer/cartographer-v2/catalog"
+        with: "#repository"
+      - text: "catalog.cartographer.tanzu.vmware.com"
+        with: "#packageName"
+    - merge:
+      - type: InvokeFragment
+        reference: tap-workload
+      - include: [ "**" ]
+      onConflict: UseFirst

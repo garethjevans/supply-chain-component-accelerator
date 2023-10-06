@@ -1,0 +1,58 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: catalog.cartographer.tanzu.vmware.com.0.0.0
+spec:
+  refName: catalog.cartographer.tanzu.vmware.com
+  releasedAt: null
+  template:
+    spec:
+      deploy:
+        - kapp: {}
+      fetch:
+        - git: {}
+      template:
+        - ytt:
+            paths:
+              - config/carvel.yaml
+        - kbld:
+            paths:
+              - config/carvel.yaml
+  valuesSchema:
+    openAPIv3: null
+  version: 0.0.0
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: catalog.cartographer.tanzu.vmware.com
+spec:
+  displayName: catalog
+  providerName: VMware
+  longDescription: catalog.cartographer.tanzu.vmware.com
+  shortDescription: catalog.cartographer.tanzu.vmware.com
+  maintainers:
+    - name: VMware
+
+  iconSVGBase64: |-
+    PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDEwIDEwIEggOTAgViA5MCBIIDEwIEwgMTAgMTAiLz48L3N2Zz4K
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  annotations:
+    kctrl.carvel.dev/local-fetch-0: .
+  name: catalog
+spec:
+  packageRef:
+    refName: catalog.cartographer.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.0.0
+      prereleases:
+        identifiers:
+          - 'dev'
+          - 'rc'
+          - 'build'
+  serviceAccountName: catalog-sa
+---

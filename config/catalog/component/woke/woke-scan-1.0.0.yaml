@@ -1,0 +1,31 @@
+apiVersion: cartographer.sh/v1alpha1
+kind: Component
+metadata:
+  name: woke-scan-1.0.0
+spec:
+  description: Performs a woke scan on the source code to search for uninclusive terminology
+
+  inputs:
+    - name: source
+      type: source
+
+  pipelineRun:
+    pipelineRef:
+      name: woke-scan
+    params:
+      - name: source-url
+        value: $(inputs.source.url)
+      - name: rules-url
+        value: https://via.vmw.com/its-woke-rules
+      - name: output
+        value: simple
+
+    workspaces:
+      - name: shared-data
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi

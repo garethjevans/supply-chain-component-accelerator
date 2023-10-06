@@ -1,0 +1,61 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:template", "template")
+
+#@ def namespace_name(component):
+name: #@ "{}-{}".format(component, data.values.build_id)
+namespace: #@ data.values.namespace
+#@ end
+
+#@ def metadata(component):
+_: #@ template.replace(namespace_name(component))
+annotations:
+  kapp.k14s.io/disable-original: ""
+labels:
+  supplychain.cc.build/part-of: catalog.cartographer.tanzu.vmware.com
+  supplychain.cc.build/component: #@ component
+  supplychain.cc.build/git-commit: #@ data.values.repo.commit
+#@ end
+
+#@ def git():
+git:
+  url: #@ data.values.repo.url
+  ref:
+    branch: #@ data.values.repo.branch
+    commit: #@ data.values.repo.commit
+#@ end
+
+#@ def image(component):
+#@   return "{}/{}/{}:{}".format(data.values.registry.host, data.values.registry.path, component, data.values.version)
+#@ end
+---
+apiVersion: supplychain.cc.build/v1alpha2
+kind: Request
+metadata: #@ metadata("catalog-bundle")
+spec:
+  artifacts:
+    imgpkgBundles:
+      - name: #@ image("catalog-bundle")
+        version: #@ data.values.version
+  buildConfig:
+    buildpackBuildConfig: {}
+    carvelPackageBuildConfig:
+      subPath: .
+    gobuildBuildConfig:
+      forceRebuild: false
+  buildType: carvelpackage
+  componentBuilds:
+    - imageName: #@ image("catalog-carvel")
+      kbldSource: garethjevans/carvel:latest
+      requestName: #@ namespace_name("catalog-carvel")
+    - imageName: #@ image("catalog-git")
+      kbldSource: garethjevans/git:latest
+      requestName: #@ namespace_name("catalog-git")
+    - imageName: #@ image("catalog-scripting-base")
+      kbldSource: garethjevans/scripting-base:latest
+      requestName: #@ namespace_name("catalog-scripting-base")
+    - imageName: #@ image("catalog-kubectl-kustomize")
+      kbldSource: garethjevans/kubectl-kustomize:latest
+      requestName: #@ namespace_name("catalog-kubectl-kustomize")
+  source: #@ git()
+  isOfficial: #@ data.values.official
+  publishToConstellation: #@ data.values.publishToConstellation

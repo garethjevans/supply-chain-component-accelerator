@@ -1,0 +1,72 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: woke-scan
+spec:
+  description: Scans the project for non-inclusive terminology
+  params:
+    - name: source-url
+      type: string
+      description: Location of the source
+    - name: rules-url
+      type: string
+      description: Location of the woke rules files
+    - name: output
+      type: string
+      description: The type of output for the scanner, recommend to set this to simple
+  workspaces:
+    - name: shared-data
+      description: |
+        This workspace contains the cloned repo files, so they can be read by the
+        next task.
+  tasks:
+    - name: fetch
+      workspaces:
+        - name: store
+          workspace: shared-data
+      params:
+        - name: url
+          value: $(params.source-url)
+      taskRef:
+        name: fetch-tgz-content-oci
+
+    - name: woke-scan
+      workspaces:
+        - name: input
+          workspace: shared-data
+      params:
+        - name: rules
+          value: $(params.rules-url)
+        - name: output
+          value: $(params.output)
+      taskSpec:
+        params:
+          - name: rules
+            type: string
+          - name: output
+            type: string
+        workspaces:
+          - name: input
+            description: The content to be untar'ed and tested
+        results:
+          - name: woke-scan-result
+            description: The output of the woke scan
+        steps:
+          - image: woke:latest
+            script: |
+              set -x
+              
+              cd $(workspaces.input.path)
+              woke -c $(params.rules) -o $(params.output) > scan-results.txt
+              
+              cat scan-results.txt
+              count=$(cat scan-results.txt | grep -v "No findings found" | wc -l)
+              printf "Found ${count} issue(s)" | tee $(results.woke-scan-result.path)
+      runAfter:
+        - fetch
+
+  results:
+    - name: scan-result
+      description: Inclusive Scan Result
+      type: string
+      value: $(tasks.woke-scan.results.woke-scan-result)

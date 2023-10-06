@@ -1,0 +1,12 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.all, expects="1+"
+
+#@ load("resources.lib.yml", "resources")
+#@ load("@ytt:template", "template")
+#@ load("@ytt:struct", "struct")
+
+#! Pipeline starts
+---
+resources:
+- #@ template.replace(resources.repo())

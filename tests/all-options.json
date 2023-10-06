@@ -1,0 +1,6 @@
+{
+  "projectName": "test-supply-chain-all-options",
+  "componentName": "other",
+  "registryServer": "registry.tanzu.vmware.com",
+  "repository": "shared-components/woke"
+}

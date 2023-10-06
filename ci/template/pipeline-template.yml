@@ -1,0 +1,11 @@
+#! /*
+#! Copyright (c) 2023 VMware, Inc. All rights reserved. VMware Confidential
+#! */
+
+#@ load("@ytt:data", "data")
+
+#! Pipeline starts
+---
+resource_types: []
+resources: []
+jobs: []

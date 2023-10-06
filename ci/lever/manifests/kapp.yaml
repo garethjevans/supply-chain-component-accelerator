@@ -1,0 +1,16 @@
+---
+apiVersion: kapp.k14s.io/v1alpha1
+kind: Config
+waitRules:
+  - resourceMatchers:
+      - apiVersionKindMatcher:
+          apiVersion: supplychain.cc.build/v1alpha2
+          kind: Request
+    supportsObservedGeneration: false
+    conditionMatchers:
+      - type: Ready
+        status: "True"
+        success: true
+      - type: Ready
+        status: "False"
+        failure: true

@@ -1,0 +1,13 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Config
+sources:
+  - image: woke:latest
+    path: images/woke
+    docker:
+      buildx:
+        rawOptions: ["--platform", "linux/amd64"]
+destinations:
+  - image: woke:latest
+    newImage: #@ data.values.build.registry_host + "/" + data.values.build.registry_project + "/woke"

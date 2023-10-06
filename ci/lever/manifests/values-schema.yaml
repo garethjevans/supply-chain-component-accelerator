@@ -1,0 +1,32 @@
+#@data/values-schema
+---
+
+#@schema/validation min_len=1
+build_id: ""
+
+#@schema/validation min_len=1
+builder: tiny-jammy
+
+#@schema/validation min_len=1
+namespace: default
+
+#@schema/validation min_len=1
+version: 0.0.1-dev
+
+official: true
+publishToConstellation: true
+
+registry:
+  #@schema/validation min_len=1
+  host: dev.registry.tanzu.vmware.com
+  #@schema/validation min_len=1
+  path: supply-chain-choreographer/cartographer-v2/catalog
+
+repo:
+  #@schema/validation min_len=1
+  url: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git
+  #@schema/validation min_len=1
+  branch: ""
+  #@schema/validation min_len=1
+  commit: ""
+  path: ./
