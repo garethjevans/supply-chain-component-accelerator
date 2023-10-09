@@ -13,3 +13,7 @@ make carvel package
 ```
 make install-from-package
 ```
+
+# To setup CI/CD on Runway
+
+Follow the guide on the [CI page](./ci/)

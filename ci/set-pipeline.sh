@@ -6,5 +6,5 @@ set -euo pipefail
 
 cd template
 ./setup.sh > /tmp/catalog.yaml
-fly --target cartographer-team set-pipeline --pipeline catalog-main --config /tmp/catalog.yaml
+fly --target cartographer-team set-pipeline --pipeline woke-main --config /tmp/catalog.yaml
 cd ..

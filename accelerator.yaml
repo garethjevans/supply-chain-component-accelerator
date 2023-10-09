@@ -98,6 +98,8 @@ engine:
         with: "#componentName+':latest'"
       - text: "/woke"
         with: "'/' + #componentName"
+      - text: "woke-main"
+        with: "#componentName+'-main'"
       - text: "dev.registry.tanzu.vmware.com"
         with: "#registryServer"
       - text: "supply-chain-choreographer/cartographer-v2"
@@ -112,8 +114,8 @@ engine:
         with: "#gitUrl"
       - text: "cartographer-team"
         with: "#runwayTeamName"
-    - merge:
-      - type: InvokeFragment
-        reference: tap-workload
-      - include: [ "**" ]
-      onConflict: UseFirst
+#    - merge:
+#      - type: InvokeFragment
+#        reference: tap-workload
+#      - include: [ "**" ]
+#      onConflict: UseFirst

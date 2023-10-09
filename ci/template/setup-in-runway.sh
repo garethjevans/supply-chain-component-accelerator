@@ -13,5 +13,4 @@ mkdir -p pipelines
   -f build-and-package/ci/build/build.yml \
   -f build-and-package/ci/repo/setup-repo.yml \
   -f build-and-package/ci/template/pipeline-template.yml \
-  --data-value build_and_package_branch=main \
-  --data-value project=catalog > pipeline/pipeline.yml
+  --data-value build_and_package_branch=main > pipeline/pipeline.yml
