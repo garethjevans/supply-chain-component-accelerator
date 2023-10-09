@@ -20,7 +20,7 @@ registry:
   #@schema/validation min_len=1
   host: dev.registry.tanzu.vmware.com
   #@schema/validation min_len=1
-  path: supply-chain-choreographer/cartographer-v2/catalog
+  path: supply-chain-choreographer/cartographer-v2
 
 repo:
   #@schema/validation min_len=1

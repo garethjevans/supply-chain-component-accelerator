@@ -2,4 +2,4 @@
 ---
 build:
   registry_host: dev.registry.tanzu.vmware.com
-  registry_project: supply-chain-choreographer/cartographer-v2/catalog
+  registry_project: supply-chain-choreographer/cartographer-v2

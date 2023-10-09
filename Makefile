@@ -1,5 +1,5 @@
 REGISTRY_HOST ?= dev.registry.tanzu.vmware.com
-REGISTRY_PROJECT ?= supply-chain-choreographer/cartographer-v2/woke
+REGISTRY_PROJECT ?= supply-chain-choreographer/cartographer-v2
 CONTROLLER_VERSION ?= 0.0.1
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)

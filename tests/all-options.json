@@ -1,8 +1,8 @@
 {
   "projectName": "golangci-lint-component",
   "componentName": "golangci-lint",
-  "registryServer": "registry.tanzu.vmware.com",
-  "repository": "shared-components/golangci-lint",
+  "registryServer": "dev.registry.tanzu.vmware.com",
+  "repository": "supply-chain-choreographer/accelerator-test",
   "packageName": "golangci-lint.tanzu.vmware.com",
   "gitUrl": "https://gitlab.eng.vmware.com/my-group/golangci-lint.git",
   "namespace": "shared-components"

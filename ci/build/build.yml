@@ -138,7 +138,7 @@ jobs:
         BUILD_VERSION: ((.:next-version))
         REPO_COMMIT: ((.:repo-commit-digest))
         REGISTRY_HOST: dev.registry.tanzu.vmware.com
-        REGISTRY_PROJECT: supply-chain-choreographer/cartographer-v2/catalog
+        REGISTRY_PROJECT: supply-chain-choreographer/cartographer-v2
         LEVER_CONFIG: ((lever.prod-kubeconfig-yaml))
         OFFICIAL: "true"
         PUBLISH: "true"

@@ -30,6 +30,8 @@ done
 
 cd $OUTPUT
 
+make carvel package
+
 echo "================================================"
 grep -R catalog * | grep -v accelerator-log.md
 echo "================================================"
@@ -40,4 +42,3 @@ echo "================================================"
 grep -R woke * | grep -v accelerator-log.md
 echo "================================================"
 
-#make carvel package
