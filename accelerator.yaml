@@ -1,11 +1,11 @@
 accelerator:
-  displayName: TAP Supply Chain
-  description: Boilerplate for generating a Tanzu Application Platform Supply Chain that takes a workload from
-    source, builds and prepares it for deployment.
+  displayName: TAP Supply Chain Component
+  description: Boilerplate for generating a Cartographer v2 Component as a carvel package with Lever.
   iconUrl: https://avatars.githubusercontent.com/u/54452117?s=200&v=4
   tags:
   - tanzu
   - supply-chain
+  - component
 
   options:
 
