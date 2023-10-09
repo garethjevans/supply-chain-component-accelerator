@@ -31,65 +31,16 @@ git:
 ---
 apiVersion: supplychain.cc.build/v1alpha2
 kind: Request
-metadata: #@ metadata("catalog-carvel")
+metadata: #@ metadata("woke-image")
 spec:
   artifacts:
     images:
-      - name: #@ image("catalog-carvel")
+      - name: #@ image("woke-image")
   buildType: kaniko
   buildConfig:
     kanikoBuildConfig:
-      subPath: images/carvel
+      subPath: images/woke
       dockerfile: Dockerfile
       extraArgs: []
   source: #@ git()
   isOfficial: #@ data.values.official
----
-apiVersion: supplychain.cc.build/v1alpha2
-kind: Request
-metadata: #@ metadata("catalog-git")
-spec:
-  artifacts:
-    images:
-      - name: #@ image("catalog-git")
-  buildType: kaniko
-  buildConfig:
-    kanikoBuildConfig:
-      subPath: images/git
-      dockerfile: Dockerfile
-      extraArgs: []
-  source: #@ git()
-  isOfficial: #@ data.values.official
----
-apiVersion: supplychain.cc.build/v1alpha2
-kind: Request
-metadata: #@ metadata("catalog-scripting-base")
-spec:
-  artifacts:
-    images:
-      - name: #@ image("catalog-scripting-base")
-  buildType: kaniko
-  buildConfig:
-    kanikoBuildConfig:
-      subPath: images/scripting-base
-      dockerfile: Dockerfile
-      extraArgs: []
-  source: #@ git()
-  isOfficial: #@ data.values.official
----
-apiVersion: supplychain.cc.build/v1alpha2
-kind: Request
-metadata: #@ metadata("catalog-kubectl-kustomize")
-spec:
-  artifacts:
-    images:
-      - name: #@ image("catalog-kubectl-kustomize")
-  buildType: kaniko
-  buildConfig:
-    kanikoBuildConfig:
-      subPath: images/kubectl-kustomize
-      dockerfile: Dockerfile
-      extraArgs: []
-  source: #@ git()
-  isOfficial: #@ data.values.official
----

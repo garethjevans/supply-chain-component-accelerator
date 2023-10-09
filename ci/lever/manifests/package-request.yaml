@@ -11,7 +11,7 @@ _: #@ template.replace(namespace_name(component))
 annotations:
   kapp.k14s.io/disable-original: ""
 labels:
-  supplychain.cc.build/part-of: catalog.cartographer.tanzu.vmware.com
+  supplychain.cc.build/part-of: woke.cartographer.tanzu.vmware.com
   supplychain.cc.build/component: #@ component
   supplychain.cc.build/git-commit: #@ data.values.repo.commit
 #@ end
@@ -30,11 +30,11 @@ git:
 ---
 apiVersion: supplychain.cc.build/v1alpha2
 kind: Request
-metadata: #@ metadata("catalog-bundle")
+metadata: #@ metadata("woke-bundle")
 spec:
   artifacts:
     imgpkgBundles:
-      - name: #@ image("catalog-bundle")
+      - name: #@ image("woke-bundle")
         version: #@ data.values.version
   buildConfig:
     buildpackBuildConfig: {}
@@ -44,18 +44,9 @@ spec:
       forceRebuild: false
   buildType: carvelpackage
   componentBuilds:
-    - imageName: #@ image("catalog-carvel")
-      kbldSource: garethjevans/carvel:latest
-      requestName: #@ namespace_name("catalog-carvel")
-    - imageName: #@ image("catalog-git")
-      kbldSource: garethjevans/git:latest
-      requestName: #@ namespace_name("catalog-git")
-    - imageName: #@ image("catalog-scripting-base")
-      kbldSource: garethjevans/scripting-base:latest
-      requestName: #@ namespace_name("catalog-scripting-base")
-    - imageName: #@ image("catalog-kubectl-kustomize")
-      kbldSource: garethjevans/kubectl-kustomize:latest
-      requestName: #@ namespace_name("catalog-kubectl-kustomize")
+    - imageName: #@ image("woke-image")
+      kbldSource: woke:latest
+      requestName: #@ namespace_name("woke-image")
   source: #@ git()
   isOfficial: #@ data.values.official
   publishToConstellation: #@ data.values.publishToConstellation

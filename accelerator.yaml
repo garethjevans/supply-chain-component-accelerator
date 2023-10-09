@@ -40,6 +40,30 @@ accelerator:
     dataType: string
     required: true
 
+  - label: Namespace
+    description: "The namespace to install the component to"
+    defaultValue: "cartographer-catalog"
+    name: namespace
+    inputType: text
+    dataType: string
+    required: true
+
+  - label: Git URL
+    description: The git url where this repository will be hosted
+    defaultValue: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git"
+    name: gitUrl
+    inputType: text
+    dataType: string
+    required: true
+
+  - label: Runway Team Name
+    description: The name of the team in runway for the CI/CD process to run under
+    defaultValue: "my-team"
+    name: runwayTeamName
+    inputType: text
+    dataType: string
+    required: true
+
   imports:
   - name: tap-workload
      
@@ -48,20 +72,46 @@ engine:
   - include: [ "**" ]
     exclude: [ ".git", ".idea", "generated", "build-local.sh", "generated/**", "tests/**" ]
 
-  - include: [ "README.md", "config/*.yaml", "ci/**", "build-templates/**" ]
+  - include: [ "README.md", "Makefile", "config/**", "ci/**", "build-templates/**", "images/**" ]
+    exclude: [ "ci/hack/_helpers.sh" ]
     chain:
+    - type: RewritePath
+      regex: "images/woke/Dockerfile"
+      rewriteTo: "'images/' + #componentName + '/Dockerfile'"
+    - type: RewritePath
+      regex: "config/catalog/components/woke/woke-scan-1.0.0.yaml"
+      rewriteTo: "'config/catalog/components/' + #componentName + '/' + #componentName + '-scan-1.0.0.yaml'"
+    - type: RewritePath
+      regex: "config/catalog/components/woke/woke-scan-pipeline.yaml"
+      rewriteTo: "'config/catalog/components/' + #componentName + '/' + #componentName + '-scan-pipeline.yaml'"
     - type: ReplaceText
       substitutions:
       - text: "source-test-scan-to-url"
         with: "#artifactId.toLowerCase()"
       - text: "woke-scan"
         with: "#componentName"
+      - text: "woke-image"
+        with: "#componentName+'-image'"
+      - text: "woke-bundle"
+        with: "#componentName+'-bundle'"
+      - text: "woke:latest"
+        with: "#componentName+':latest'"
+      - text: "/woke"
+        with: "'/' + #componentName"
       - text: "dev.registry.tanzu.vmware.com"
         with: "#registryServer"
-      - text: "supply-chain-choreographer/cartographer-v2/catalog"
+      - text: "supply-chain-choreographer/cartographer-v2"
         with: "#repository"
       - text: "catalog.cartographer.tanzu.vmware.com"
         with: "#packageName"
+      - text: "woke.cartographer.tanzu.vmware.com"
+        with: "#packageName"
+      - text: "woke-catalog"
+        with: "#namespace"
+      - text: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git"
+        with: "#gitUrl"
+      - text: "cartographer-team"
+        with: "#runwayTeamName"
     - merge:
       - type: InvokeFragment
         reference: tap-workload

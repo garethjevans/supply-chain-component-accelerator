@@ -1,6 +1,9 @@
 {
-  "projectName": "test-supply-chain-all-options",
-  "componentName": "other",
+  "projectName": "golangci-lint-component",
+  "componentName": "golangci-lint",
   "registryServer": "registry.tanzu.vmware.com",
-  "repository": "shared-components/woke"
+  "repository": "shared-components/golangci-lint",
+  "packageName": "golangci-lint.tanzu.vmware.com",
+  "gitUrl": "https://gitlab.eng.vmware.com/my-group/golangci-lint.git",
+  "namespace": "shared-components"
 }

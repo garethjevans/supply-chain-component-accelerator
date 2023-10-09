@@ -29,4 +29,15 @@ for DIR in $DIRS; do
 done
 
 cd $OUTPUT
-make carvel package
+
+echo "================================================"
+grep -R catalog * | grep -v accelerator-log.md
+echo "================================================"
+grep -R cartographer * | grep -v accelerator-log.md
+echo "================================================"
+grep -R supply-chain-choreographer * | grep -v accelerator-log.md
+echo "================================================"
+grep -R woke * | grep -v accelerator-log.md
+echo "================================================"
+
+#make carvel package

@@ -43,7 +43,7 @@ ytt -f "$LEVER_APP_DIR/manifests" \
     --data-value-yaml official="$OFFICIAL" \
     --data-value-yaml publishToConstellation="$PUBLISH" | \
    kapp deploy \
-   --app label:$PROJECT.cartographer.tanzu.vmware.com/build="$BUILD_ID" \
+   --app label:woke.cartographer.tanzu.vmware.com/build="$BUILD_ID" \
    --diff-changes \
    --wait-timeout 45m0s \
    --file - \
@@ -54,11 +54,5 @@ mkdir -p manifests/lever
 kubectl get request "$PROJECT-carvel-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/carvel-build-status.yml
 cat manifests/lever/carvel-build-status.yml
 
-kubectl get request "$PROJECT-git-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/git-build-status.yml
-cat manifests/lever/git-build-status.yml
-
-kubectl get request "$PROJECT-scripting-base-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/scripting-base-build-status.yml
-cat manifests/lever/scripting-base-build-status.yml
-
-kubectl get request "$PROJECT-bundle-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/controller-bundle-status.yml
-cat manifests/lever/controller-bundle-status.yml
+kubectl get request "$PROJECT-woke-image-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/woke-image-build-status.yml
+cat manifests/lever/woke-image-build-status.yml
