@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: namespace
+    app.kubernetes.io/instance: system
+    app.kubernetes.io/component: woke-scan
+    app.kubernetes.io/created-by: woke-scan
+    app.kubernetes.io/part-of: woke-scan
+    app.kubernetes.io/managed-by: kustomize
+  name: system

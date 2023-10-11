@@ -1,0 +1,4 @@
+resources:
+- service_account.yaml
+- pull_secret.yaml
+- cluster_role.yaml

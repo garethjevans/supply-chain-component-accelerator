@@ -3,6 +3,9 @@ namespace: woke-catalog
 
 ## Append samples of your project ##
 resources:
+- ../common/
+# if your component requires any custom rbac uncomment this line
+# - ../rbac/
 - components/woke/woke-scan-1.0.0.yaml
 - components/woke/woke-scan-pipeline.yaml
 #+kubetester:scaffold:manifestskustomizesamples
