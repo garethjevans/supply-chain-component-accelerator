@@ -70,9 +70,9 @@ accelerator:
 engine:
   merge:
   - include: [ "**" ]
-    exclude: [ ".git", ".idea", "generated", "build-local.sh", "generated/**", "tests/**" ]
+    exclude: [ ".git/**", ".idea/**", "generated", "build-local.sh", "generated/**", "tests/**" ]
 
-  - include: [ "README.md", "Makefile", "config/**", "ci/**", "build-templates/**", "images/**" ]
+  - include: [ "README.md", "Makefile", "config/**", "ci/**", "build-templates/**", "images/**", "install/**" ]
     exclude: [ "ci/hack/_helpers.sh" ]
     chain:
     - type: RewritePath

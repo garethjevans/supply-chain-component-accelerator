@@ -104,3 +104,20 @@ package: carvel ytt
 	rm -f package-build.yml
 	rm -f package-resources.yml
 
+.PHONY: install-from-package
+install-from-package:
+	@echo "-------------------------"
+	cat carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/package.yml
+	@echo "-------------------------"
+
+	kubectl apply -n tap-install -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/package.yml
+	kubectl apply -n tap-install -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/metadata.yml
+	kubectl apply -n tap-install -f install/package-install.yaml
+	sleep 5
+	kubectl get pkgi -n tap-install woke-scan -oyaml
+
+.PHONY: uninstall-from-package
+uninstall-from-package:
+	kubectl delete -f install/package-install.yaml --ignore-not-found=$(ignore-not-found)
+	kubectl delete -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/package.yml --ignore-not-found=$(ignore-not-found)
+	kubectl delete -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/metadata.yml --ignore-not-found=$(ignore-not-found)

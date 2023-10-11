@@ -14,12 +14,11 @@ tanzu accelerator generate-from-local \
   --output-dir "$OUTPUT" \
   --server-url http://accelerator.$SVC_ADDRESS.nip.io
 
-tree $OUTPUT
 
 #cat $OUTPUT/accelerator-log.md
 #cat $OUTPUT/cluster-supply-chain.yaml
 
-DIRS="config build-templates ci"
+DIRS="build-templates ci config install"
 for DIR in $DIRS; do
 	echo "================================================"
 	echo "$DIR Delta"
@@ -42,3 +41,4 @@ echo "================================================"
 grep -R woke * | grep -v accelerator-log.md
 echo "================================================"
 
+make install-from-package
