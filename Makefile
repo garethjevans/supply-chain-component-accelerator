@@ -58,10 +58,12 @@ $(LOCALBIN):
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v4.5.7
 YTT_VERSION ?= v0.45.4
+KCTRL_VERSION ?= 0.48.1
 
 ## Tool Locations
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 YTT ?= $(LOCALBIN)/ytt
+KCTRL ?= $(LOCALBIN)/kctrl
 
 ## Tool Installation
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
@@ -82,19 +84,25 @@ ytt: $(YTT)
 $(YTT): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/vmware-tanzu/carvel-ytt/cmd/ytt@$(YTT_VERSION)
 
+.PHONY: kctrl
+kctrl: $(KCTRL)
+
+$(KCTRL): $(LOCALBIN)
+	curl -sSL -o $(KCTRL) https://github.com/carvel-dev/kapp-controller/releases/download/v$(KCTRL_VERSION)/kctrl-darwin-amd64
+	chmod a+x $(KCTRL)
+
 .PHONY: carvel
 carvel: kustomize
 	mkdir -p carvel
-	echo $(KUSTOMIZE)
 	$(KUSTOMIZE) build config/catalog > carvel/config.yaml
 
 .PHONY: package
-package: carvel ytt
+package: carvel ytt kctrl
 	$(YTT) -f build-templates/kbld-config.yaml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > kbld-config.yaml
 	$(YTT) -f build-templates/package-build.yml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > package-build.yml
 	$(YTT) -f build-templates/package-resources.yml -f build-templates/values-schema.yaml > package-resources.yml
 
-	kctrl package release -v $(CONTROLLER_VERSION) -y --debug
+	$(KCTRL) package release -v $(CONTROLLER_VERSION) -y --debug
 
 	@echo "-------------------------"
 	cat kbld-config.yaml
