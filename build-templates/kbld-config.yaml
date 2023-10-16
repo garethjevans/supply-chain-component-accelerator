@@ -7,7 +7,7 @@ sources:
     path: images/woke
     docker:
       buildx:
-        rawOptions: ["--platform", "linux/amd64"]
+        rawOptions: ["--platform", "linux/amd64", "--provenance=false"]
 destinations:
   - image: woke:latest
     newImage: #@ data.values.build.registry_host + "/" + data.values.build.registry_project + "/woke"

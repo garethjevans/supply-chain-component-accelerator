@@ -34,9 +34,9 @@ spec:
   shortDescription: catalog.cartographer.tanzu.vmware.com
   maintainers:
     - name: VMware
-
   iconSVGBase64: |-
     PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNIDEwIDEwIEggOTAgViA5MCBIIDEwIEwgMTAgMTAiLz48L3N2Zz4K
+  supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall

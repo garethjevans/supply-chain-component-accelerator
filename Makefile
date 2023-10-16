@@ -59,18 +59,19 @@ $(LOCALBIN):
 KUSTOMIZE_VERSION ?= v4.5.7
 YTT_VERSION ?= v0.45.4
 KCTRL_VERSION ?= 0.48.1
+PACKAGE_VALIDATOR_VERSION ?= main
 
 ## Tool Locations
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 YTT ?= $(LOCALBIN)/ytt
 KCTRL ?= $(LOCALBIN)/kctrl
+PACKAGE_VALIDATOR ?= $(LOCALBIN)/package-validator
 
 ## Tool Installation
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
-
 $(KUSTOMIZE): $(LOCALBIN)
 	@if test -x $(LOCALBIN)/kustomize && ! $(LOCALBIN)/kustomize version | grep -q $(KUSTOMIZE_VERSION); then \
 		echo "$(LOCALBIN)/kustomize version is not expected $(KUSTOMIZE_VERSION). Removing it before installing."; \
@@ -80,16 +81,19 @@ $(KUSTOMIZE): $(LOCALBIN)
 
 .PHONY: ytt
 ytt: $(YTT)
-
 $(YTT): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/vmware-tanzu/carvel-ytt/cmd/ytt@$(YTT_VERSION)
 
 .PHONY: kctrl
 kctrl: $(KCTRL)
-
 $(KCTRL): $(LOCALBIN)
 	curl -sSL -o $(KCTRL) https://github.com/carvel-dev/kapp-controller/releases/download/v$(KCTRL_VERSION)/kctrl-darwin-amd64
 	chmod a+x $(KCTRL)
+
+.PHONY: package-validator
+package-validator: $(PACKAGE_VALIDATOR)
+$(PACKAGE_VALIDATOR): $(LOCALBIN)
+	GOBIN=$(LOCALBIN) go install github.com/garethjevans/package-validator/cmd/package-validator@$(PACKAGE_VALIDATOR_VERSION)
 
 .PHONY: carvel
 carvel: kustomize
@@ -97,7 +101,7 @@ carvel: kustomize
 	$(KUSTOMIZE) build config/catalog > carvel/config.yaml
 
 .PHONY: package
-package: carvel ytt kctrl
+package: carvel ytt kctrl package-validator
 	$(YTT) -f build-templates/kbld-config.yaml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > kbld-config.yaml
 	$(YTT) -f build-templates/package-build.yml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > package-build.yml
 	$(YTT) -f build-templates/package-resources.yml -f build-templates/values-schema.yaml > package-resources.yml
@@ -111,6 +115,8 @@ package: carvel ytt kctrl
 	rm -f kbld-config.yaml
 	rm -f package-build.yml
 	rm -f package-resources.yml
+
+	$(PACKAGE_VALIDATOR) validate --path carvel-artifacts
 
 .PHONY: install-from-package
 install-from-package:
