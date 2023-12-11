@@ -59,13 +59,21 @@ $(LOCALBIN):
 KUSTOMIZE_VERSION ?= v4.5.7
 YTT_VERSION ?= v0.45.4
 KCTRL_VERSION ?= 0.48.1
+KBLD_VERSION ?= 0.38.1
+VENDIR_VERSION ?= 0.37.0
+
 PACKAGE_VALIDATOR_VERSION ?= main
+COMPONENT_VALIDATOR_VERSION ?= main
 
 ## Tool Locations
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 YTT ?= $(LOCALBIN)/ytt
 KCTRL ?= $(LOCALBIN)/kctrl
+KBLD ?= $(LOCALBIN)/kbld
+VENDIR ?= $(LOCALBIN)/vendir
+
 PACKAGE_VALIDATOR ?= $(LOCALBIN)/package-validator
+COMPONENT_VALIDATOR ?= $(LOCALBIN)/component-validator
 
 ## Tool Installation
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
@@ -84,24 +92,42 @@ ytt: $(YTT)
 $(YTT): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/vmware-tanzu/carvel-ytt/cmd/ytt@$(YTT_VERSION)
 
+.PHONY: kbld
+kbld: $(KBLD)
+$(KBLD): $(LOCALBIN)
+	curl -sSL -o $(KBLD) https://github.com/carvel-dev/kbld/releases/download/v$(KBLD_VERSION)/kbld-$(shell uname -s)-amd64
+	chmod a+x $(KBLD)
+
 .PHONY: kctrl
 kctrl: $(KCTRL)
 $(KCTRL): $(LOCALBIN)
-	curl -sSL -o $(KCTRL) https://github.com/carvel-dev/kapp-controller/releases/download/v$(KCTRL_VERSION)/kctrl-darwin-amd64
+	curl -sSL -o $(KCTRL) https://github.com/carvel-dev/kapp-controller/releases/download/v$(KCTRL_VERSION)/kctrl-$(shell uname -s)-amd64
 	chmod a+x $(KCTRL)
+
+.PHONY: vendir
+vendir: $(VENDIR)
+$(VENDIR): $(LOCALBIN)
+	curl -sSL -o $(VENDIR) https://github.com/carvel-dev/vendir/releases/download/v$(VENDIR_VERSION)/vendir-$(shell uname -s)-amd64
+	chmod a+x $(VENDIR)
 
 .PHONY: package-validator
 package-validator: $(PACKAGE_VALIDATOR)
 $(PACKAGE_VALIDATOR): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/garethjevans/package-validator/cmd/package-validator@$(PACKAGE_VALIDATOR_VERSION)
 
+.PHONY: component-validator
+component-validator: $(COMPONENT_VALIDATOR)
+$(COMPONENT_VALIDATOR): $(LOCALBIN)
+	GOBIN=$(LOCALBIN) go install github.com/garethjevans/component-validator/cmd/component-validator@$(COMPONENT_VALIDATOR_VERSION)
+
 .PHONY: carvel
 carvel: kustomize
 	mkdir -p carvel
 	$(KUSTOMIZE) build config/catalog > carvel/config.yaml
+	$(COMPONENT_VALIDATOR) validate --path carvel/config.yaml
 
 .PHONY: package
-package: carvel ytt kctrl package-validator
+package: carvel ytt kbld kctrl vendir package-validator
 	$(YTT) -f build-templates/kbld-config.yaml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > kbld-config.yaml
 	$(YTT) -f build-templates/package-build.yml -f build-templates/values-schema.yaml -v build.registry_host=$(REGISTRY_HOST) -v build.registry_project=$(REGISTRY_PROJECT) > package-build.yml
 	$(YTT) -f build-templates/package-resources.yml -f build-templates/values-schema.yaml > package-resources.yml
