@@ -34,7 +34,8 @@ accelerator:
     required: true
 
   - label: Package Name
-    defaultValue: "woke.tanzu.vmware.com"
+    description: Should end with component.apps.tanzu.vmware.com
+    defaultValue: "woke.component.apps.tanzu.vmware.com"
     name: packageName
     inputType: text
     dataType: string
