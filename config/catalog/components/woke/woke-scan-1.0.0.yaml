@@ -2,6 +2,8 @@ apiVersion: supply-chain.apps.tanzu.vmware.com/v1alpha1
 kind: Component
 metadata:
   name: woke-scan-1.0.0
+  labels:
+    supply-chain.apps.tanzu.vmware.com/catalog: tanzu
 spec:
   description: Performs a woke scan on the source code to search for uninclusive terminology
 
