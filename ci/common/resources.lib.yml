@@ -11,21 +11,21 @@
   source:
     owner: vmware-tanzu
     repository: carvel-kapp
-    access_token: #@ "((" + data.values.project + "/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))"
 - name: yq-release
   type: github-release
   icon: github
   source:
     owner: mikefarah
     repository: yq
-    access_token: #@ "((" + data.values.project + "/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))"
 - name: ytt-release
   type: github-release
   icon: github
   source:
     owner: vmware-tanzu
     repository: carvel-ytt
-    access_token: #@ "((" + data.values.project + "/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))"
 #@ end
 
 #@ def build_pkg_source():
@@ -35,8 +35,8 @@
   source:
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git
     branch: #@ data.values.build_and_package_branch
-    username: #@ "((" + data.values.project + "/gitlab.build-project-user))
-    password: #@ "((" + data.values.project + "/gitlab.build-project-token))
+    username: #@ "((" + data.values.project + "/gitlab.build-project-user))"
+    password: #@ "((" + data.values.project + "/gitlab.build-project-token))"
     paths:
     - ci/**
 #@ end
@@ -56,7 +56,7 @@
   source:
     owner: mikefarah
     repository: yq
-    access_token: #@ "((" + data.values.project + "/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))"
 #@ end
 
 #@ def repo():
@@ -65,9 +65,9 @@
   icon: gitlab
   source:
     branch: #@ data.values.build_and_package_branch
-    password: #@ "((" + data.values.project + "/gitlab.repo-project-token))
+    password: #@ "((" + data.values.project + "/gitlab.repo-project-token))"
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git
-    username: #@ "((" + data.values.project + "/gitlab.repo-project-user))
+    username: #@ "((" + data.values.project + "/gitlab.repo-project-user))"
     ignore_paths:
       - ci/**
       - README.md
@@ -81,9 +81,9 @@
     driver: git
     initial_version: 0.0.1
     branch: #@ data.values.build_and_package_branch
-    password: #@ "((" + data.values.project + "/gitlab.repo-project-token))
+    password: #@ "((" + data.values.project + "/gitlab.repo-project-token))"
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git
-    username: #@ "((" + data.values.project + "/gitlab.repo-project-user))
+    username: #@ "((" + data.values.project + "/gitlab.repo-project-user))"
     file: #@ "woke-scan-" + data.values.build_and_package_branch
 #@ end
 

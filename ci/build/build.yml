@@ -32,7 +32,7 @@ resources:
   type: github-release
   icon: github
   source:
-    access_token: #@ "((" + data.values.project + "/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))"
     owner: vmware-tanzu
     repository: carvel-kbld
 - name: buildinfo
@@ -172,7 +172,7 @@ jobs:
           set -o errexit
           set -o nounset
           set -o pipefail
-              
+
           cd repo
           git config --global --add safe.directory $PWD
           make renovate
