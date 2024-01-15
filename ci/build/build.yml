@@ -142,3 +142,36 @@ jobs:
         LEVER_CONFIG: ((lever.prod-kubeconfig-yaml))
         OFFICIAL: "true"
         PUBLISH: "true"
+
+- name: renovate
+  max_in_flight: 1
+  plan:
+  - get: every-1h
+    trigger: true
+  - get: repo
+  - task: renovate
+    timeout: 30m
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ghcr.io/renovatebot/renovate
+          tag: full
+      inputs:
+        - name: repo
+      params:
+        GITLAB_TOKEN: #@ "((" + data.values.project + "/gitlab.build-project-token))"
+        GITHUB_COM_TOKEN: #@ "((" + data.values.project + "/github.token))"
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - |
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+              
+          cd repo
+          git config --global --add safe.directory $PWD
+          make renovate

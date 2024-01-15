@@ -1,0 +1,150 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "binarySource": "install",
+  "baseBranches": [
+    "main"
+  ],
+  "rebaseWhen": "behind-base-branch",
+  "enabledManagers": [
+    "gomod",
+    "regex"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "groupName": "Go dependencies",
+      "groupSlug": "go",
+      "matchFileNames": [
+        "go.mod"
+      ]
+    },
+    {
+      "enabled": false,
+      "matchPackagePrefixes": [
+        "github.com/tektoncd/pipeline"
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor"
+      ]
+    },
+    {
+      "matchFileNames": [
+        "Makefile"
+      ],
+      "schedule": [
+        "on monday"
+      ]
+    }
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Makefile"
+      ],
+      "matchStrings": [
+        "RENOVATE_VERSION \\?= (?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "ghcr.io/renovatebot/renovate",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Makefile"
+      ],
+      "matchStrings": [
+        "COMPONENT_VALIDATOR_VERSION \\?= (?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "garethjevans/component-validator",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Makefile"
+      ],
+      "matchStrings": [
+        "PACKAGE_VALIDATOR_VERSION \\?= (?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "garethjevans/package-validator",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG YTT_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "carvel-dev/ytt",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG IMGPKG_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "carvel-dev/imgpkg",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG KBLD_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "carvel-dev/kbld",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG YQ_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "mikefarah/yq",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG CRANE_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "google/go-containerregistry",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "ARG SCM_VERSION=(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "garethjevans/scm",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "semanticCommits": "enabled"
+}
+

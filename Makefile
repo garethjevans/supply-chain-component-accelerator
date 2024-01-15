@@ -161,3 +161,35 @@ uninstall-from-package:
 	kubectl delete -f install/package-install.yaml --ignore-not-found=$(ignore-not-found)
 	kubectl delete -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/package.yml --ignore-not-found=$(ignore-not-found)
 	kubectl delete -f carvel-artifacts/packages/catalog.cartographer.tanzu.vmware.com/metadata.yml --ignore-not-found=$(ignore-not-found)
+
+##@ Renovate
+
+RENOVATE_VERSION ?= 37.128.4
+RENOVATE_PLATFORM ?= gitlab
+RENOVATE_REPOSITORY ?= tanzu-application-platform/cartographer/supply-chain-catalog
+RENOVATE_LOG_LEVEL ?= debug
+RENOVATE_FLAGS ?=
+GITLAB_API ?= https://gitlab.eng.vmware.com/api/v4
+
+.PHONY: renovate
+renovate: require-renovate-env ## Update dependencies
+	#
+	# 🚧 Renovating dependencies of $(RENOVATE_REPOSITORY) on $(RENOVATE_PLATFORM)
+	#
+	LOG_LEVEL=$(RENOVATE_LOG_LEVEL) \
+	renovate \
+	  --platform $(RENOVATE_PLATFORM) \
+	  --token $${GITLAB_TOKEN} \
+	  --endpoint $(GITLAB_API) \
+	  $(RENOVATE_FLAGS) \
+	  $(RENOVATE_REPOSITORY)
+
+.PHONY: require-renovate-env
+require-renovate-env:
+ifndef GITHUB_COM_TOKEN
+	$(error GITHUB_COM_TOKEN must be set. It is expected by renovate.)
+endif
+ifndef GITLAB_TOKEN
+	$(error GITLAB_TOKEN must be set. It is expected by renovate.)
+endif
+
