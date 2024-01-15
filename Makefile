@@ -121,7 +121,7 @@ $(COMPONENT_VALIDATOR): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/garethjevans/component-validator/cmd/component-validator@$(COMPONENT_VALIDATOR_VERSION)
 
 .PHONY: carvel
-carvel: kustomize
+carvel: kustomize component-validator
 	mkdir -p carvel
 	$(KUSTOMIZE) build config/catalog > carvel/config.yaml
 	$(COMPONENT_VALIDATOR) validate --path carvel/config.yaml
