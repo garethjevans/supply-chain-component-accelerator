@@ -57,6 +57,14 @@ accelerator:
     dataType: string
     required: true
 
+  - label: Versions Git URL
+    description: The git url where the version management for this repo will be stored
+    defaultValue: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git"
+    name: versionsGitUrl
+    inputType: text
+    dataType: string
+    required: true
+
   - label: Runway Team Name
     description: The name of the team in runway for the CI/CD process to run under
     defaultValue: "my-team"
@@ -113,6 +121,10 @@ engine:
         with: "#namespace"
       - text: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git"
         with: "#gitUrl"
+      - text: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git"
+        with: "#versionsGitUrl"
+      - text: "tanzu-application-platform/cartographer/woke"
+        with: "#gitUrl.replace('https://gitlab.eng.vmware.com/','')"
       - text: "cartographer-team"
         with: "#runwayTeamName"
 #    - merge:
