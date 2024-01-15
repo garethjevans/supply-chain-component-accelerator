@@ -166,7 +166,7 @@ uninstall-from-package:
 
 RENOVATE_VERSION ?= 37.128.4
 RENOVATE_PLATFORM ?= gitlab
-RENOVATE_REPOSITORY ?= tanzu-application-platform/cartographer/supply-chain-catalog
+RENOVATE_REPOSITORY ?= tanzu-application-platform/cartographer/woke
 RENOVATE_LOG_LEVEL ?= debug
 RENOVATE_FLAGS ?=
 GITLAB_API ?= https://gitlab.eng.vmware.com/api/v4
