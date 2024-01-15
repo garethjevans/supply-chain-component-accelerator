@@ -10,4 +10,5 @@ YTT=ytt
   -f ../build/build.yml \
   -f ../repo/setup-repo.yml \
   -f ../template/pipeline-template.yml \
-  --data-value build_and_package_branch=main
+  --data-value build_and_package_branch=main \
+  --data-value project=woke-scan

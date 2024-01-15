@@ -32,7 +32,7 @@ resources:
   type: github-release
   icon: github
   source:
-    access_token: ((woke-scan/github.token))
+    access_token: #@ "((" + data.values.project + "/github.token))
     owner: vmware-tanzu
     repository: carvel-kbld
 - name: buildinfo
@@ -135,6 +135,7 @@ jobs:
         user: root
         path: build-and-package/ci/build/build-app.sh
       params:
+        PROJECT: #@ data.values.project
         BUILD_VERSION: ((.:next-version))
         REPO_COMMIT: ((.:repo-commit-digest))
         REGISTRY_HOST: dev.registry.tanzu.vmware.com

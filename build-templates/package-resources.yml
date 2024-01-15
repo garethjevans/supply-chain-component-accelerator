@@ -28,7 +28,7 @@ kind: PackageMetadata
 metadata:
   name: catalog.cartographer.tanzu.vmware.com
 spec:
-  displayName: catalog
+  displayName: catalog.cartographer.tanzu.vmware.com
   providerName: VMware
   longDescription: catalog.cartographer.tanzu.vmware.com
   shortDescription: catalog.cartographer.tanzu.vmware.com
@@ -43,7 +43,7 @@ kind: PackageInstall
 metadata:
   annotations:
     kctrl.carvel.dev/local-fetch-0: .
-  name: catalog
+  name: woke-scan
 spec:
   packageRef:
     refName: catalog.cartographer.tanzu.vmware.com
@@ -54,5 +54,5 @@ spec:
           - 'dev'
           - 'rc'
           - 'build'
-  serviceAccountName: catalog-sa
+  serviceAccountName: tap-install-sa
 ---
