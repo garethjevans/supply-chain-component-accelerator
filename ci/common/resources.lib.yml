@@ -73,6 +73,28 @@
       - README.md
 #@ end
 
+#@ def mr():
+- name: mr
+  type: gitlab
+  icon: gitlab
+  source:
+    url: https://gitlab.eng.vmware.com
+    private_token: #@ "((" + data.values.project + "/gitlab.repo-project-token))"
+    kind: MergeRequest
+    config:
+      project_url: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git
+      skip_work_in_progress: true
+      status: opened
+      target_branch: #@ data.values.build_and_package_branch
+#@ end
+
+#@ def chat():
+- name: chat
+  type: chat-resource
+  source:
+    webhook_url: #@ "((" + data.values.project + "/chat.url))"
+#@ end
+
 #@ def semver():
 - name: version
   type: semver
@@ -87,5 +109,4 @@
     file: #@ "woke-scan-" + data.values.build_and_package_branch
 #@ end
 
-#@ resources = struct.make(common_resources=common_resources, gcp_resource=gcp_resource, build_pkg_source=build_pkg_source, yq_resource=yq_resource, repo=repo, semver=semver)
-
+#@ resources = struct.make(common_resources=common_resources, gcp_resource=gcp_resource, build_pkg_source=build_pkg_source, yq_resource=yq_resource, repo=repo, semver=semver, mr=mr, chat=chat)

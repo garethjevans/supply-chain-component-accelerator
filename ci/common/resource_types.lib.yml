@@ -5,23 +5,16 @@
 
 ---
 #@ def common_types():
-- name: imgpkg
+- name: gitlab
   type: registry-image
   source:
-    #! https://github.com/chenbh/imgpkg-resource
-    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/chenbh1/imgpkg-resource
-    tag: 0.2.0
-- name: osspi
+    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/gitlab-resource
+    tag: 4.1.4
+- name: chat-resource
   type: registry-image
   source:
-    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/oss-resource
-    tag: 3.1.1
-- name: build-info
-  type: registry-image
-  source:
-    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/buildinfo-resource
-    tag: 3.1.1
-
+    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/google-chat-resource
+    tag: 0.3.0
 #@ end
 
 #@ resource_types = struct.make(common_types=common_types)

@@ -1,0 +1,264 @@
+#@ load("@ytt:assert", "assert")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:struct", "struct")
+#@ load("@ytt:template", "template")
+
+---
+
+#@ def name(prefix, is_merge_request):
+#@   if is_merge_request:
+#@     return prefix + "-mr"
+#@   else:
+#@     return prefix
+#@   end
+#@ end
+
+#@ def successMessage():
+#@   return "Project: *" + data.values.project + "*\nBranch: *" + data.values.build_and_package_branch + "*\n\nSuccess ${ATC_BUILD_URL}\n"
+#@ end
+
+#@ def failureMessage():
+#@   return "Project: *" + data.values.project + "*\nBranch: *" + data.values.build_and_package_branch + "*\n\nFailed ${ATC_BUILD_URL}\n"
+#@ end
+
+#@ def renovate():
+- name: renovate
+  max_in_flight: 1
+  plan:
+    - get: every-1h
+      trigger: true
+    - get: repo
+    - task: renovate
+      timeout: 30m
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: ghcr.io/renovatebot/renovate
+            tag: full
+        inputs:
+          - name: repo
+        params:
+          GITLAB_TOKEN: #@ "((" + data.values.project + "/gitlab.build-project-token))"
+          GITHUB_COM_TOKEN: #@ "((" + data.values.project + "/github.token))"
+        run:
+          path: /bin/bash
+          args:
+            - -c
+            - |
+              set -o errexit
+              set -o nounset
+              set -o pipefail
+              
+              cd repo
+              git config --global --add safe.directory $PWD
+              make renovate
+#@ end
+
+#@ def test(is_merge_request):
+- name: #@ name("test", is_merge_request)
+  plan:
+  - get: build-and-package
+    trigger: true
+    passed: [set-pipeline]
+  #@ if is_merge_request:
+  - get: mr
+    trigger: true
+  - put: mr
+    params:
+      repository: mr
+      status: running
+  #@ else:
+  - get: repo
+    trigger: true
+  #@ end
+  - task: test-golang
+    file: build-and-package/ci/tasks/run-tests.yaml
+  #@ if is_merge_request:
+    input_mapping:
+      repo: mr
+  - put: mr
+    params:
+      repository: mr
+      status: success
+  on_failure:
+    put: chat
+    no_get: true
+    params:
+      text: #@ failureMessage()
+      dry_run: false
+  #@ end
+#@ end
+
+#@ def validate(is_merge_request):
+- name: #@ name("validate-config", is_merge_request)
+  plan:
+    - in_parallel:
+        - get: build-and-package
+          trigger: true
+          passed:
+          - #@ name("test", is_merge_request)
+        #@ if is_merge_request:
+        - get: mr
+          trigger: true
+          passed: [ test-mr ]
+        #@ else:
+        - get: repo
+          trigger: true
+          passed: [ test ]
+        #@ end
+        - get: kustomize-task
+    - task: validate-config
+      image: kustomize-task
+      config:
+        inputs:
+          - name: build-and-package
+          - name: repo
+          - name: kustomize-task
+        platform: linux
+        run:
+          path: build-and-package/ci/tasks/validate-config.sh
+      #@ if is_merge_request:
+      input_mapping:
+        repo: mr
+      #@ end
+  on_failure:
+    put: chat
+    no_get: true
+    params:
+      text: #@ failureMessage()
+      dry_run: false
+#@ end
+
+#@ def build(is_merge_request):
+- name: #@ name("build", is_merge_request)
+  plan:
+    - get: build-and-package
+      passed:
+      - #@ name("validate-config", is_merge_request)
+      trigger: true
+    - get: yq-release
+      params:
+        globs:
+          - yq_linux_amd64
+    - get: ytt-release
+    - get: carvel-kapp-release
+    - get: carvel-kbld-release
+    - get: builder-task
+    #@ if is_merge_request:
+    - get: mr
+      passed: [ validate-config-mr ]
+      trigger: true
+    - load_var: repo-commit-digest
+      file: mr/.git/merge-request.json
+    #@ else:
+    - get: repo
+      passed: [ validate-config ]
+      trigger: true
+    - put: version
+      params: { pre: alpha }
+    - load_var: next-version
+      file: version/version
+    - load_var: repo-commit-digest
+      file: repo/.git/ref
+    #@ end
+    - task: build-app
+      image: builder-task
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+          - name: build-and-package
+          - name: repo
+          - name: yq-release
+          - name: ytt-release
+          - name: carvel-kapp-release
+          - name: carvel-kbld-release
+        outputs:
+          - name: manifests
+        run:
+          user: root
+          path: build-and-package/ci/build/build-app.sh
+        params:
+          PROJECT: #@ data.values.project
+          #@ if is_merge_request:
+          BUILD_VERSION: "pr"
+          REPO_COMMIT: ((.:repo-commit-digest.diff_refs.head_sha))
+          #@ else:
+          BUILD_VERSION: ((.:next-version))
+          REPO_COMMIT: ((.:repo-commit-digest))
+          #@ end
+          REGISTRY_HOST: dev.registry.tanzu.vmware.com
+          REGISTRY_PROJECT: supply-chain-choreographer/cartographer-v2/catalog
+          LEVER_CONFIG: ((lever.prod-kubeconfig-yaml))
+          #@ if is_merge_request:
+          OFFICIAL: "false"
+          PUBLISH: "false"
+          #@ else:
+          OFFICIAL: "true"
+          PUBLISH: "true"
+          #@ end
+      #@ if is_merge_request:
+      input_mapping:
+        repo: mr
+      #@ end
+  on_success:
+    do:
+      - task: generate-log
+        config:
+          platform: linux
+          image: builder-task
+          outputs:
+            - name: log
+          params:
+            MESSAGE: #@ successMessage()
+          run:
+            path: /bin/bash
+            args:
+              - -c
+              - |
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+                
+                mkdir -p log
+                echo $MESSAGE > log/log
+      - load_var: log
+        file: log/log
+      - put: chat
+        no_get: true
+        params:
+          text: ((.:log))
+          dry_run: false
+  on_failure:
+    do:
+      - task: generate-log
+        config:
+          platform: linux
+          image: builder-task
+          outputs:
+            - name: log
+          params:
+            MESSAGE: #@ failureMessage()
+          run:
+            path: /bin/bash
+            args:
+              - -c
+              - |
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+
+                mkdir -p log
+                echo $MESSAGE > log/log
+      - load_var: log
+        file: log/log
+      - put: chat
+        no_get: true
+        params:
+          text: ((.:log))
+          dry_run: false
+#@ end
+
+#@ jobs = struct.make(renovate=renovate, test=test, validate=validate, build=build)
