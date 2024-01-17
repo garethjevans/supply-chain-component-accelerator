@@ -16,12 +16,6 @@
   source:
     repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/oss-resource
     tag: 3.1.1
-- name: build-info
-  type: registry-image
-  source:
-    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/buildinfo-resource
-    tag: 3.1.1
-
 #@ end
 
 #@ resource_types = struct.make(common_types=common_types)

@@ -35,9 +35,11 @@ resources:
     access_token: #@ "((" + data.values.project + "/github.token))"
     owner: vmware-tanzu
     repository: carvel-kbld
-- name: buildinfo
-  source: null
-  type: build-info
+- name: every-1h
+  type: time
+  icon: clock-outline
+  source:
+    interval: 1h
 
 jobs:
 - name: set-pipeline
@@ -110,7 +112,6 @@ jobs:
     - get: repo
       passed: [validate-config]
       trigger: true
-    - put: buildinfo
     - put: version
       params: {pre: alpha}
   - load_var: next-version
