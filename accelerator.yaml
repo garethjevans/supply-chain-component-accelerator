@@ -124,7 +124,7 @@ engine:
       - text: "https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git"
         with: "#versionsGitUrl"
       - text: "tanzu-application-platform/cartographer/woke"
-        with: "#gitUrl.replace('https://gitlab.eng.vmware.com/','')"
+        with: "#gitUrl.replace('https://gitlab.eng.vmware.com/','').replace('.git','')"
       - text: "cartographer-team"
         with: "#runwayTeamName"
 #    - merge:
