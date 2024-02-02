@@ -49,10 +49,4 @@ ytt -f "$LEVER_APP_DIR/manifests" \
    --file - \
    --yes
 
-mkdir -p manifests/lever
-
-kubectl get request "$PROJECT-carvel-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/carvel-build-status.yml
-cat manifests/lever/carvel-build-status.yml
-
-kubectl get request "$PROJECT-woke-image-$BUILD_ID" -oyaml | yq '.status' > manifests/lever/woke-image-build-status.yml
-cat manifests/lever/woke-image-build-status.yml
+kubectl get request -l "woke.cartographer.tanzu.vmware.com/build=$BUILD_ID" -oyaml
