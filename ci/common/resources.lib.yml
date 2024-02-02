@@ -80,7 +80,7 @@
   source:
     driver: git
     initial_version: 0.0.1
-    branch: #@ data.values.build_and_package_branch
+    branch: main
     password: #@ "((" + data.values.project + "/gitlab.repo-project-token))"
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git
     username: #@ "((" + data.values.project + "/gitlab.repo-project-user))"
