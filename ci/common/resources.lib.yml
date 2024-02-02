@@ -69,8 +69,9 @@
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-catalog.git
     username: #@ "((" + data.values.project + "/gitlab.repo-project-user))"
     ignore_paths:
-      - ci/**
-      - README.md
+      - 'ci/**'
+      - 'docs/**'
+      - '*.md'
 #@ end
 
 #@ def semver():
@@ -84,7 +85,7 @@
     password: #@ "((" + data.values.project + "/gitlab.repo-project-token))"
     uri: https://gitlab.eng.vmware.com/supply-chain-choreographer/experiments/carto-v2-versions.git
     username: #@ "((" + data.values.project + "/gitlab.repo-project-user))"
-    file: #@ "woke-scan-" + data.values.build_and_package_branch
+    file: #@ data.values.project + "-" + data.values.build_and_package_branch
 #@ end
 
 #@ resources = struct.make(common_resources=common_resources, gcp_resource=gcp_resource, build_pkg_source=build_pkg_source, yq_resource=yq_resource, repo=repo, semver=semver)
