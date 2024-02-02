@@ -9,6 +9,14 @@
 
 #! Pipeline starts
 ---
+#@ def bump(branch):
+#@   if branch == "main":
+#@     return { "pre": "alpha" }
+#@   else:
+#@     return { "bump": "patch" }
+#@   end
+#@ end
+
 resource_types:
 - #@ template.replace(resource_types.common_types())
 
@@ -113,7 +121,7 @@ jobs:
       passed: [validate-config]
       trigger: true
     - put: version
-      params: {pre: alpha}
+      params: #@ bump(data.values.build_and_package_branch)
   - load_var: next-version
     file: version/version
   - load_var: repo-commit-digest
