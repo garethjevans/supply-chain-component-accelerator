@@ -9,6 +9,7 @@
 
 #! Pipeline starts
 ---
+
 #@ def bump(branch):
 #@   if branch == "main":
 #@     return { "pre": "alpha" }
@@ -17,37 +18,21 @@
 #@   end
 #@ end
 
-resource_types:
-- #@ template.replace(resource_types.common_types())
+#! resource_types:
+#! - #@ template.replace(resource_types.common_types())
 
 resources:
-- #@ template.replace(resources.common_resources())
 - #@ template.replace(resources.build_pkg_source())
 - #@ template.replace(resources.semver())
-- name: builder-task
-  type: registry-image
-  icon: docker
-  source:
-    repository: harbor-repo.vmware.com/dockerhub-proxy-cache/krashed843/ubuntu-curl-kubectl
-    tag: latest
+- #@ template.replace(resources.timer())
+
+#! TODO we should replace this with the ci-image
 - name: kustomize-task
   type: registry-image
   icon: docker
   source:
     repository: harbor-repo.vmware.com/dockerhub-proxy-cache/line/kubectl-kustomize
     tag: latest
-- name: carvel-kbld-release
-  type: github-release
-  icon: github
-  source:
-    access_token: #@ "((" + data.values.project + "/github.token))"
-    owner: vmware-tanzu
-    repository: carvel-kbld
-- name: every-1h
-  type: time
-  icon: clock-outline
-  source:
-    interval: 1h
 
 jobs:
 - name: set-pipeline
@@ -55,15 +40,15 @@ jobs:
   - in_parallel:
     - get: build-and-package
       trigger: true
-    - get: ytt-release
-    - get: builder-task
   - task: generate-pipeline
-    image: builder-task
     config:
+      image_resource:
+        type: registry-image
+        source:
+          repository: harbor-repo.vmware.com/tanzu_supply_chain/integration-ci
       platform: linux
       inputs:
       - name: build-and-package
-      - name: ytt-release
       outputs:
       - name: pipeline
       run:
@@ -109,14 +94,6 @@ jobs:
     - get: build-and-package
       passed: [validate-config]
       trigger: true
-    - get: yq-release
-      params:
-        globs:
-        - yq_linux_amd64
-    - get: ytt-release
-    - get: carvel-kapp-release
-    - get: carvel-kbld-release
-    - get: builder-task
     - get: repo
       passed: [validate-config]
       trigger: true
@@ -127,17 +104,16 @@ jobs:
   - load_var: repo-commit-digest
     file: repo/.git/ref
   - task: build-app
-    image: builder-task
     privileged: true
     config:
+      image_resource:
+        type: registry-image
+        source:
+          repository: harbor-repo.vmware.com/tanzu_supply_chain/integration-ci
       platform: linux
       inputs:
       - name: build-and-package
       - name: repo
-      - name: yq-release
-      - name: ytt-release
-      - name: carvel-kapp-release
-      - name: carvel-kbld-release
       outputs:
       - name: manifests
       run: 
@@ -152,6 +128,30 @@ jobs:
         LEVER_CONFIG: ((lever.prod-kubeconfig-yaml))
         OFFICIAL: "true"
         PUBLISH: "true"
+  - task: commit-and-tag
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: harbor-repo.vmware.com/tanzu_supply_chain/integration-ci
+      inputs:
+        - name: repo
+      outputs:
+        - name: repo
+      params:
+        BUILD_VERSION: ((.:next-version))
+      run:
+        path: sh
+        args:
+          - -cx
+          - |
+            cd repo
+            git tag $BUILD_VERSION
+  - put: repo
+    params:
+      repository: repo
+      only_tag: true
 
 - name: renovate
   max_in_flight: 1

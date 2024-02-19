@@ -5,12 +5,6 @@
 
 set -euo pipefail
 
-source build-and-package/ci/hack/_helpers.sh
-
-install_kapp
-install_yq
-install_ytt
-
 mkdir -p manifests
 # FIXME really should add a licence
 # cp repo/LICENSE manifests/LICENSE

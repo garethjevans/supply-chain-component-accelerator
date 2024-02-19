@@ -5,7 +5,16 @@
 
 ---
 #@ def common_types():
-
+- name: gitlab
+  type: registry-image
+  source:
+    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/gitlab-resource
+    tag: 4.1.4
+- name: chat-resource
+  type: registry-image
+  source:
+    repository: devtools-docker.artifactory.eng.vmware.com/vmware/runway/resourcetypes/google-chat-resource
+    tag: 0.3.0
 #@ end
 
 #@ resource_types = struct.make(common_types=common_types)

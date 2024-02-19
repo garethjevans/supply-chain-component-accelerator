@@ -1,11 +1,8 @@
 #!/bin/bash
 
 set -ex
-mkdir -p /tmp/tools
-mv ytt-release/ytt-linux-amd64 /tmp/tools/ytt && chmod +x /tmp/tools/ytt
-export YTT=/tmp/tools/ytt
-"$YTT" version
-mkdir -p pipelines
+YTT=ytt
+mkdir -p pipeline
 
 "$YTT" \
   -f build-and-package/ci/common/resources.lib.yml \
