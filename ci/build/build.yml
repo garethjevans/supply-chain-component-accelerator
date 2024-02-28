@@ -153,6 +153,40 @@ jobs:
       repository: repo
       only_tag: true
 
+- name: osspi-scan
+  serial: true
+  plan:
+    - in_parallel:
+      - get: build-and-package
+      - get: repo
+
+    - task: osspi-scan-source
+      file: build-and-package/ci/tasks/osspi/run-osspi-source.yaml
+      input_mapping:
+        ci-repo: build-and-package
+      params:
+        REPO: repo
+        API_KEY: #@ "((" + data.values.project + "/osspi.osm-apikey))"
+        USERNAME: #@ "((" + data.values.project + "/osspi.osm-username))"
+        OSM_ENVIRONMENT: production
+        ENDPOINT: https://osm.eng.vmware.com/
+        PRODUCT: #@ "((" + data.values.project + "/osspi.osm-product))"
+        VERSION: #@ "((" + data.values.project + "/osspi.osm-version))"
+        OSSPI_SCANNING_PARAMS: |
+          enable: true
+          include_bomtools: "go_mod"
+          search_depth: 5
+          go_mod.path: "/go/bin/go"
+
+          # exclude for signature scans
+          exclude_patterns:
+            - vendor
+        OSSPI_IGNORE_RULES: |
+          - name_regex: onsi\/ginkgo
+            version_regex: .*
+          - name_regex: gomega
+            version_regex: .*
+
 - name: renovate
   max_in_flight: 1
   plan:
