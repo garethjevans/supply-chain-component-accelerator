@@ -39,6 +39,10 @@
       ]
     }
   ],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+     "enabled": true
+  },
   "postUpdateOptions": [
     "gomodTidy"
   ],
